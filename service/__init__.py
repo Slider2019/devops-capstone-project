@@ -8,7 +8,6 @@ import sys
 from flask import Flask
 from service import config
 from service.common import log_handlers
-from .routes import talisman
 
 # Create Flask application
 app = Flask(__name__)
