@@ -61,28 +61,98 @@ def create_accounts():
 # LIST ALL ACCOUNTS
 ######################################################################
 
-# ... place you code here to LIST accounts ...
+@app.route("/accounts", methods=["GET"])
+def list_all_accounts():
+    """ List all accounts """
+    app.logger.info("Request to list all accounts")
+    account_list = Account.all()
+    app.logger.info("[%s] accounts found.", len(account_list))
+
+    if len(account_list) == 0:
+        # No error status code, because it is not an error
+        # if nothing specific was searched for
+        # and nothing was found in an empty database.
+        response_status = status.HTTP_200_OK
+        message = account_list
+    else:
+        response_status = status.HTTP_200_OK
+        message = [account.serialize() for account in account_list]
+
+    return jsonify(message), response_status
 
 
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
 
-# ... place you code here to READ an account ...
+@app.route("/accounts/<int:account_id>", methods=["GET"])
+def read_account(account_id: int):
+    """ Read an account depending on supplied ID """
+    app.logger.info("Request to read an account")
+    account = Account.find(account_id)
+
+    if account is None:
+        app.logger.info("No account with ID %s found.", account_id)
+        response_status = status.HTTP_404_NOT_FOUND
+        message = f"Status Code: {response_status}"
+    else:
+        app.logger.info("Account with ID %s found.", account_id)
+        response_status = status.HTTP_200_OK
+        message = account.serialize()
+
+    return jsonify(message), response_status
 
 
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
 
-# ... place you code here to UPDATE an account ...
+@app.route("/accounts/<int:account_id>", methods=["PUT"])
+def update_account(account_id: int):
+    """ Update an account depending on supplied ID """
+    app.logger.info("Request to update an account")
+
+    check_content_type(HEADER_CONTENT_TYPE)
+
+    account = Account.find(account_id)
+
+    if account is None:
+        app.logger.info("No account with ID %s found.", account_id)
+        response_status = status.HTTP_404_NOT_FOUND
+        message = f"Status Code: {response_status}"
+    else:
+        app.logger.info("Account with ID %s found.", account_id)
+        response_status = status.HTTP_200_OK
+        account.deserialize(request.get_json())
+        account.id = account_id
+        account.update()
+        message = account.serialize()
+
+    return jsonify(message), response_status
 
 
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
 
-# ... place you code here to DELETE an account ...
+@app.route("/accounts/<int:account_id>", methods=["DELETE"])
+def delete_account(account_id: int):
+    """ Delete an account depending on supplied ID """
+    app.logger.info("Request to delete an account")
+
+    account = Account.find(account_id)
+
+    if account is None:
+        app.logger.info("No account with ID %s found.", account_id)
+        response_status = status.HTTP_404_NOT_FOUND
+        message = f"Status Code: {response_status}"
+    else:
+        app.logger.info("Account with ID %s found.", account_id)
+        response_status = status.HTTP_204_NO_CONTENT
+        account.delete()
+        message = ""
+
+    return message, response_status
 
 
 ######################################################################
