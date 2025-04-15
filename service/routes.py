@@ -4,7 +4,7 @@ Account Service
 This microservice handles the lifecycle of Accounts
 """
 # pylint: disable=unused-import
-from flask import jsonify, request, make_response, abort, url_for   # noqa; F401
+from flask import jsonify, request, make_response, abort, url_for  # noqa; F401
 from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
@@ -65,7 +65,7 @@ def create_accounts():
 ######################################################################
 @app.route("/accounts", methods=["GET"])
 def list_all_accounts():
-    """ List all accounts """
+    """List all accounts"""
     app.logger.info("Request to list all accounts")
     account_list = Account.all()
     app.logger.info("[%s] accounts found.", len(account_list))
@@ -88,7 +88,7 @@ def list_all_accounts():
 ######################################################################
 @app.route("/accounts/<int:account_id>", methods=["GET"])
 def read_account(account_id: int):
-    """ Read an account depending on supplied ID """
+    """Read an account depending on supplied ID"""
     app.logger.info("Request to read an account")
     account = Account.find(account_id)
 
@@ -109,7 +109,7 @@ def read_account(account_id: int):
 ######################################################################
 @app.route("/accounts/<int:account_id>", methods=["PUT"])
 def update_account(account_id: int):
-    """ Update an account depending on supplied ID """
+    """Update an account depending on supplied ID"""
     app.logger.info("Request to update an account")
 
     check_content_type(HEADER_CONTENT_TYPE)
@@ -136,7 +136,7 @@ def update_account(account_id: int):
 ######################################################################
 @app.route("/accounts/<int:account_id>", methods=["DELETE"])
 def delete_account(account_id: int):
-    """ Delete an account depending on supplied ID """
+    """Delete an account depending on supplied ID"""
     app.logger.info("Request to delete an account")
 
     account = Account.find(account_id)
@@ -167,5 +167,3 @@ def check_content_type(media_type):
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {media_type}",
     )
-    
-    
